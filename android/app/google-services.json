@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "433877313370",
+    "project_id": "backend-baliloka",
+    "storage_bucket": "backend-baliloka.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433877313370:android:c93584772bb67c062ff563",
+        "android_client_info": {
+          "package_name": "com.example.bali_loka"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYJhFg8oQtl-sINyii3CpZk1ZSO0_Az9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
