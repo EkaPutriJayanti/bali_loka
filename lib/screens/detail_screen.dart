@@ -194,7 +194,7 @@ class DetailScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 12),
                             Text(
-                              'Rp5.000',
+                              'Rp50.000',
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -210,7 +210,7 @@ class DetailScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 12),
                             Text(
-                              'Rp5.000',
+                              'Rp10.000',
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w600,
                               ),

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FavoriteScreen extends StatelessWidget {
-  const FavoriteScreen({super.key});
+  final VoidCallback? onBackToHome;
+
+  const FavoriteScreen({super.key, this.onBackToHome});
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +16,12 @@ class FavoriteScreen extends StatelessWidget {
       },
       {
         'title': 'Pantai Lovina',
-        'image': 'assets/images/Beach.jpg',
+        'image': 'assets/images/DolphinsLovina.jpg',
         'location': 'Desa Beraban, Kec. Kediri',
       },
       {
         'title': 'Monkey Forest',
-        'image': 'assets/images/AlasHarum.jpg',
+        'image': 'assets/images/UbudMonkey.jpg',
         'location': 'Desa Beraban, Kec. Kediri',
       },
       {
@@ -41,7 +43,15 @@ class FavoriteScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF4A72B0)),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else if (onBackToHome != null) {
+              onBackToHome!();
+            } else {
+              Navigator.of(context).maybePop();
+            }
+          },
         ),
         centerTitle: true,
         title: Text(
@@ -57,7 +67,7 @@ class FavoriteScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
               'Search Your Favorite Place',
               style: GoogleFonts.poppins(
@@ -69,28 +79,21 @@ class FavoriteScreen extends StatelessWidget {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: GridView.builder(
                 itemCount: items.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.95,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.9,
                 ),
                 itemBuilder: (context, index) {
                   final item = items[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
+                  return Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,26 +106,38 @@ class FavoriteScreen extends StatelessWidget {
                               ),
                               child: Image.asset(
                                 item['image']!,
-                                height: 90,
+                                height: 100,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            const Positioned(
+                            Positioned(
                               top: 8,
                               right: 8,
-                              child: Icon(
-                                Icons.favorite,
-                                color: Colors.red,
-                                size: 24,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.08),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                  size: 22,
+                                ),
                               ),
                             ),
                           ],
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 6,
+                            horizontal: 12,
+                            vertical: 8,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,10 +146,12 @@ class FavoriteScreen extends StatelessWidget {
                                 item['title']!,
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                  fontSize: 15,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: 4),
                               Row(
                                 children: [
                                   const Icon(
@@ -148,9 +165,10 @@ class FavoriteScreen extends StatelessWidget {
                                       item['location']!,
                                       style: GoogleFonts.poppins(
                                         color: Colors.grey,
-                                        fontSize: 11,
+                                        fontSize: 12,
                                       ),
                                       overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ),
                                 ],
@@ -167,22 +185,6 @@ class FavoriteScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavBar(2),
-    );
-  }
-
-  Widget _buildBottomNavBar(int selectedIndex) {
-    return BottomNavigationBar(
-      currentIndex: selectedIndex,
-      selectedItemColor: const Color(0xFF4A72B0),
-      unselectedItemColor: Colors.grey,
-      showUnselectedLabels: true,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.explore), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ''),
-        BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
-      ],
     );
   }
 }

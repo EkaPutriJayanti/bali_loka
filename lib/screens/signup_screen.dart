@@ -1,8 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:bali_loka/screens/home_screen.dart';
+import 'package:bali_loka/service/firebase_auth.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSignUp() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      await registerUser(
+        _nameController.text.trim(),
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+        _phoneController.text.trim(),
+      );
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } catch (e) {
+      setState(() {
+        _error = e is Exception ? e.toString() : 'Sign up failed';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +74,12 @@ class SignUpScreen extends StatelessWidget {
                   ),
                 ),
                 // Logo
-                Image.asset('assets/icons/Logo.png', height: 150),
+                Image.asset('assets/icons/Logo.png', height: 140),
                 const SizedBox(height: 20),
                 const SizedBox(height: 40),
                 // Name Field
                 TextField(
+                  controller: _nameController,
                   decoration: InputDecoration(
                     hintText: 'Name',
                     hintStyle: GoogleFonts.poppins(color: Colors.grey),
@@ -56,6 +108,7 @@ class SignUpScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 // Phone Number Field
                 TextField(
+                  controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
                     hintText: 'Phone Number',
@@ -85,6 +138,7 @@ class SignUpScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 // Email Field
                 TextField(
+                  controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintText: 'Email',
@@ -114,6 +168,7 @@ class SignUpScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 // Password Field
                 TextField(
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: 'Password',
@@ -141,26 +196,35 @@ class SignUpScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
+                if (_error != null) ...[
+                  Text(_error!, style: const TextStyle(color: Colors.red)),
+                  const SizedBox(height: 8),
+                ],
                 // Sign Up Button
                 SizedBox(
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _isLoading ? null : _handleSignUp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF4A72B0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Text(
-                      'Sign Up',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child:
+                        _isLoading
+                            ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                            : Text(
+                              'Sign Up',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
                   ),
                 ),
                 const SizedBox(height: 20),

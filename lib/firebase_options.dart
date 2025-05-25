@@ -17,34 +17,19 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return linux;
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
@@ -52,11 +37,56 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCYJhFg8oQtl-sINyii3CpZk1ZSO0_Az9s',
+    appId: '1:433877313370:web:c93584772bb67c062ff563',
+    messagingSenderId: '433877313370',
+    projectId: 'backend-baliloka',
+    authDomain: 'backend-baliloka.firebaseapp.com',
+    storageBucket: 'backend-baliloka.appspot.com',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCYJhFg8oQtl-sINyii3CpZk1ZSO0_Az9s',
     appId: '1:433877313370:android:c93584772bb67c062ff563',
     messagingSenderId: '433877313370',
     projectId: 'backend-baliloka',
     storageBucket: 'backend-baliloka.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCYJhFg8oQtl-sINyii3CpZk1ZSO0_Az9s',
+    appId: '1:433877313370:ios:c93584772bb67c062ff563',
+    messagingSenderId: '433877313370',
+    projectId: 'backend-baliloka',
+    storageBucket: 'backend-baliloka.appspot.com',
+    iosClientId: '433877313370-ios-client-id',
+    iosBundleId: 'com.example.baliLoka',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCYJhFg8oQtl-sINyii3CpZk1ZSO0_Az9s',
+    appId: '1:433877313370:macos:c93584772bb67c062ff563',
+    messagingSenderId: '433877313370',
+    projectId: 'backend-baliloka',
+    storageBucket: 'backend-baliloka.appspot.com',
+    iosClientId: '433877313370-macos-client-id',
+    iosBundleId: 'com.example.baliLoka',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCYJhFg8oQtl-sINyii3CpZk1ZSO0_Az9s',
+    appId: '1:433877313370:windows:c93584772bb67c062ff563',
+    messagingSenderId: '433877313370',
+    projectId: 'backend-baliloka',
+    storageBucket: 'backend-baliloka.appspot.com',
+  );
+
+  static const FirebaseOptions linux = FirebaseOptions(
+    apiKey: 'AIzaSyCYJhFg8oQtl-sINyii3CpZk1ZSO0_Az9s',
+    appId: '1:433877313370:linux:c93584772bb67c062ff563',
+    messagingSenderId: '433877313370',
+    projectId: 'backend-baliloka',
+    storageBucket: 'backend-baliloka.appspot.com',
   );
 }
