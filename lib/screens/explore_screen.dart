@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'DetailExplore_Screen.dart';
 
 class ExploreScreen extends StatelessWidget {
   final VoidCallback? onBackToHome;
@@ -25,14 +26,13 @@ class ExploreScreen extends StatelessWidget {
       {'title': 'Ogoh-ogoh', 'image': 'assets/images/OgohOgoh.jpg'},
     ];
 
-    // Ukuran tiap card (crossAxisCellCount, mainAxisCellCount)
     final List<List<double>> cardSizes = [
-      [1, 1], // Cendrawasih Dance
-      [1, 2], // Sunrise in Batur
-      [1, 2], // Ubud Monkey
-      [1, 1.3], // Sunday Market Canggu
-      [1, 2], // Dolphins Lovina
-      [1, 1.57], // Ogoh-ogoh
+      [1, 1],
+      [1, 2],
+      [1, 2],
+      [1, 1.3],
+      [1, 2],
+      [1, 1.57],
     ];
 
     return Scaffold(
@@ -94,71 +94,22 @@ class ExploreScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // Expanded(
-          //   child: Padding(
-          //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          //     child: MasonryGridView.count(
-          //       crossAxisCount: 2,
-          //       mainAxisSpacing: 16,
-          //       crossAxisSpacing: 16,
-          //       itemCount: items.length,
-          //       itemBuilder: (context, index) {
-          //         final item = items[index];
-          //         final size = cardSizes[index];
-          //         return SizedBox(
-          //           height: 120 * size[1],
-          //           child: ClipRRect(
-          //             borderRadius: BorderRadius.circular(16),
-          //             child: Stack(
-          //               fit: StackFit.expand,
-          //               children: [
-          //                 Image.asset(item['image']!, fit: BoxFit.cover),
-          //                 // Blur effect
-          //                 BackdropFilter(
-          //                   filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-          //                   child: Container(
-          //                     color: Colors.black.withOpacity(0.10),
-          //                   ),
-          //                 ),
-          //                 Center(
-          //                   child: Padding(
-          //                     padding: const EdgeInsets.all(8.0),
-          //                     child: Text(
-          //                       item['title']!,
-          //                       textAlign: TextAlign.center,
-          //                       style: GoogleFonts.poppins(
-          //                         color: Colors.white,
-          //                         fontWeight: FontWeight.bold,
-          //                         fontSize: 16,
-          //                         letterSpacing: 1,
-          //                       ),
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ],
-          //             ),
-          //           ),
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ScrollConfiguration(
-                behavior: ScrollConfiguration.of(
-                  context,
-                ).copyWith(overscroll: false),
+                behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
                 child: MasonryGridView.count(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 16, // Tambahkan jarak antar baris
-                  crossAxisSpacing: 16, // Tambahkan jarak antar kolom
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     final item = items[index];
                     final size = cardSizes[index];
-                    return SizedBox(
+                    final isSunrise = item['title'] == 'Sunrise in Batur';
+
+                    final card = SizedBox(
                       height: 120 * size[1],
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
@@ -191,6 +142,22 @@ class ExploreScreen extends StatelessWidget {
                         ),
                       ),
                     );
+
+                    if (isSunrise) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailExploreScreen(),
+                            ),
+                          );
+                        },
+                        child: card,
+                      );
+                    } else {
+                      return card;
+                    }
                   },
                 ),
               ),

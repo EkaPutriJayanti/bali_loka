@@ -92,7 +92,11 @@ flutter:
     - assets/icons/google.png
     - assets/icons/facebook.png
     - assets/images/Profile.jpg
-
+    - assets/images/Sunrise_Mertasari.jpg
+    - assets/images/Sunrise_Sanur.jpg
+    - assets/images/Sunrise_Lovina.jpg
+    - assets/images/Sunrise_Batur.jpg
+    - assets/images/Sunrise_Kintamani.jpg
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/to/resolution-aware-images
 
