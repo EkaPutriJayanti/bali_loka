@@ -229,60 +229,60 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 32),
                 // Social Login Text
-                Text(
-                  'Log in with',
-                  style: GoogleFonts.poppins(color: Colors.grey),
-                ),
-                const SizedBox(height: 24),
-                // Social Login Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.15),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Image.asset(
-                          'assets/icons/google.png',
-                          height: 28,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.15),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Image.asset(
-                          'assets/icons/facebook.png',
-                          height: 28,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Text(
+                //   'Log in with',
+                //   style: GoogleFonts.poppins(color: Colors.grey),
+                // ),
+                // const SizedBox(height: 24),
+                // // Social Login Buttons
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     GestureDetector(
+                //       onTap: () {},
+                //       child: Container(
+                //         padding: const EdgeInsets.all(10),
+                //         decoration: BoxDecoration(
+                //           color: Colors.white,
+                //           shape: BoxShape.circle,
+                //           boxShadow: [
+                //             BoxShadow(
+                //               color: Colors.grey.withOpacity(0.15),
+                //               blurRadius: 8,
+                //               offset: const Offset(0, 2),
+                //             ),
+                //           ],
+                //         ),
+                //         child: Image.asset(
+                //           'assets/icons/google.png',
+                //           height: 28,
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(width: 24),
+                //     GestureDetector(
+                //       onTap: () {},
+                //       child: Container(
+                //         padding: const EdgeInsets.all(10),
+                //         decoration: BoxDecoration(
+                //           color: Colors.white,
+                //           shape: BoxShape.circle,
+                //           boxShadow: [
+                //             BoxShadow(
+                //               color: Colors.grey.withOpacity(0.15),
+                //               blurRadius: 8,
+                //               offset: const Offset(0, 2),
+                //             ),
+                //           ],
+                //         ),
+                //         child: Image.asset(
+                //           'assets/icons/facebook.png',
+                //           height: 28,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 const SizedBox(height: 32),
                 // Sign Up Link
                 Row(

@@ -1,37 +1,22 @@
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
 
-class NewDestinationCard extends StatefulWidget {
+class NewDestinationCard extends StatelessWidget {
   final Destination destination;
 
   const NewDestinationCard({super.key, required this.destination});
 
   @override
-  State<NewDestinationCard> createState() => _NewDestinationCardState();
-}
-
-class _NewDestinationCardState extends State<NewDestinationCard> {
-  bool isFavorite = false;
-
-  @override
-  void initState() {
-    super.initState();
-    isFavorite = widget.destination.isFavorite;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
         color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
@@ -43,10 +28,18 @@ class _NewDestinationCardState extends State<NewDestinationCard> {
               left: Radius.circular(16),
             ),
             child: Image.asset(
-              widget.destination.imageUrl,
+              destination.imageUrl,
               width: 100,
               height: 100,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 100,
+                  height: 100,
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.error_outline),
+                );
+              },
             ),
           ),
           Expanded(
@@ -57,7 +50,7 @@ class _NewDestinationCardState extends State<NewDestinationCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    widget.destination.name,
+                    destination.title,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -76,7 +69,7 @@ class _NewDestinationCardState extends State<NewDestinationCard> {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          widget.destination.location,
+                          destination.location,
                           style: const TextStyle(
                             fontSize: 12,
                             color: Colors.grey,
@@ -87,22 +80,29 @@ class _NewDestinationCardState extends State<NewDestinationCard> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.star, size: 14, color: Colors.amber[700]),
+                      const SizedBox(width: 4),
+                      Text(
+                        destination.rating.toString(),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Rp ${destination.entranceFee.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  isFavorite = !isFavorite;
-                });
-              },
-              child: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : Colors.grey,
-                size: 24,
               ),
             ),
           ),
