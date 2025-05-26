@@ -1,154 +1,265 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../models/user_model.dart';
+import '../service/user_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final VoidCallback? onBackToHome;
 
-  const ProfileScreen({super.key, this.onBackToHome});
+  const ProfileScreen({Key? key, this.onBackToHome}) : super(key: key);
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final UserService _userService = UserService();
+  final _formKey = GlobalKey<FormState>();
+
+  UserModel? _userData;
+  bool _isLoading = true;
+  bool _isSaved = true;
+
+  final _usernameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  File? _image;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+
+    _usernameController.addListener(() {
+      setState(() {
+        _isSaved = false;
+      });
+    });
+
+    _phoneController.addListener(() {
+      setState(() {
+        _isSaved = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+        _isSaved = false;
+      });
+    }
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final userData = await _userService.getCurrentUser();
+      setState(() {
+        _userData = userData;
+        _isLoading = false;
+        if (userData != null) {
+          _usernameController.text = userData.username ?? '';
+          _phoneController.text = userData.phone ?? '';
+        }
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      _showSnackBar('Error loading profile: $e');
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      try {
+        if (_userData != null) {
+          final updatedUser = UserModel(
+            uid: _userData!.uid,
+            email: _userData!.email,
+            username: _usernameController.text.trim(),
+            phone: _phoneController.text.trim(),
+          );
+
+          await _userService.updateUserProfile(updatedUser);
+          setState(() {
+            _userData = updatedUser;
+            _isSaved = true;
+          });
+          _showSnackBar('Profile updated successfully');
+        }
+      } catch (e) {
+        _showSnackBar('Error updating profile: $e');
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF4A72B0)),
+          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF4A72B0)),
           onPressed: () {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
-            } else if (onBackToHome != null) {
-              onBackToHome!();
+            if (widget.onBackToHome != null) {
+              widget.onBackToHome!();
             } else {
-              Navigator.of(context).maybePop();
+              Navigator.pop(context);
             }
           },
         ),
-        centerTitle: true,
-        title: Text(
+        title: const Text(
           'Profile',
-          style: GoogleFonts.poppins(
-            color: const Color(0xFF4A72B0),
+          style: TextStyle(
+            color: Color(0xFF4A72B0),
             fontWeight: FontWeight.bold,
-            fontSize: 22,
           ),
         ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Color(0xFF4A72B0)),
+            onPressed: () async {
+              await _userService.logout();
+              if (context.mounted) {
+                Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+              }
+            },
+          ),
+        ],
+        elevation: 0,
       ),
-      body: SingleChildScrollView(
-        // child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 40),
-            // Profile Picture
-            Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                CircleAvatar(
-                  radius: 54,
-                  backgroundColor: Colors.white,
-                  backgroundImage: const AssetImage(
-                    'assets/images/Profile.jpg',
-                  ),
-                ),
-                Positioned(
-                  bottom: 4,
-                  right: 4,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          blurRadius: 4,
+      body: SafeArea(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _userData == null
+                ? const Center(child: Text('No user data available'))
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
+                        Center(
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundColor: Colors.grey[300],
+                                backgroundImage: _image != null ? FileImage(_image!) : null,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: _pickImage,
+                                  child: const CircleAvatar(
+                                    radius: 16,
+                                    backgroundColor: Colors.blueAccent,
+                                    child: Icon(Icons.add, color: Colors.white, size: 16),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(height: 30),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              _buildTextField(
+                                label: 'Name',
+                                controller: _usernameController,
+                              ),
+                              _buildTextField(
+                                label: 'Phone Number',
+                                controller: _phoneController,
+                                keyboardType: TextInputType.phone,
+                              ),
+                              _buildTextField(
+                                label: 'Email',
+                                value: _userData!.email,
+                                enabled: false,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _saveProfile,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4A72B0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Save",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
                       ],
                     ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.edit,
-                        color: Color(0xFF4A72B0),
-                        size: 22,
-                      ),
-                      onPressed: () {},
-                      iconSize: 28,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            // Name
-            _buildTextField(label: 'Name', initialValue: 'Alkana'),
-            const SizedBox(height: 16),
-            // Phone Number
-            _buildTextField(
-              label: 'Phone Number',
-              initialValue: '085858230833',
-            ),
-            const SizedBox(height: 16),
-            // Email
-            _buildTextField(label: 'Email', initialValue: 'alkana@gmail.com'),
-            const SizedBox(height: 32),
-            // Save Button
-            SizedBox(
-              width: 260,
-              height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {},
-                child: Text(
-                  'Save',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
-    // );
   }
 
   Widget _buildTextField({
     required String label,
-    required String initialValue,
+    String? value,
+    TextEditingController? controller,
+    bool enabled = true,
+    int maxLines = 1,
+    TextInputType keyboardType = TextInputType.text,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
-          const SizedBox(height: 4),
-          TextField(
-            controller: TextEditingController(text: initialValue),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-            ),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        initialValue: controller == null ? value : null,
+        enabled: enabled,
+        maxLines: maxLines,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelText: label,
+          filled: true,
+          fillColor: enabled ? Colors.white : Colors.grey[200],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
+        ),
+        validator: (val) {
+          if (enabled && (val == null || val.isEmpty)) {
+            return 'Please enter $label';
+          }
+          return null;
+        },
       ),
     );
   }

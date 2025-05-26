@@ -125,7 +125,22 @@ class _HomeContent extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
             SizedBox(
               height: 100,
               child: ListView.builder(
@@ -144,7 +159,7 @@ class _HomeContent extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -161,7 +176,7 @@ class _HomeContent extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             SizedBox(
               height: 250,
               child: ListView.builder(
@@ -175,7 +190,7 @@ class _HomeContent extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -192,7 +207,7 @@ class _HomeContent extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               shrinkWrap: true,

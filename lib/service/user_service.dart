@@ -1,19 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../models/user_model.dart';
 
 class UserService {
-  final CollectionReference users = FirebaseFirestore.instance.collection(
-    'users',
-  );
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<Map<String, dynamic>?> getUserById(String userId) async {
-    DocumentSnapshot doc = await users.doc(userId).get();
-    if (doc.exists) {
-      return {'user_id': doc.id, ...doc.data() as Map<String, dynamic>};
+  // Ambil user aktif dan data Firestore-nya
+  Future<UserModel?> getCurrentUser() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser == null) return null;
+
+    DocumentSnapshot doc = await _firestore
+        .collection('users')
+        .doc(currentUser.uid)
+        .get();
+
+    if (doc.exists && doc.data() != null) {
+      return UserModel.fromMap(currentUser.uid, doc.data()! as Map<String, dynamic>);
+    } else {
+      return null;
     }
-    return null;
   }
 
-  Future<void> updateUser(String userId, Map<String, dynamic> data) async {
-    await users.doc(userId).update(data);
+  // Update data user ke Firestore (buat dokumen jika belum ada)
+  Future<void> updateUserProfile(UserModel user) async {
+    await _firestore
+        .collection('users')
+        .doc(user.uid)
+        .set(user.toMap(), SetOptions(merge: true));
   }
+
+  Future<void> logout() async {
+  await FirebaseAuth.instance.signOut();
+}
 }
