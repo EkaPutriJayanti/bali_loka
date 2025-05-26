@@ -1,36 +1,110 @@
 import 'package:flutter/material.dart';
 
 class DetailExploreScreen extends StatelessWidget {
-  final List<Map<String, String>> sunrisePlaces = [
-    {
-      'image': 'assets/images/Sunrise_Mertasari.jpg',
-      'name': 'Pantai Mertasari',
-      'location': 'Kec. Denpasar Timur',
-    },
-    {
-      'image': 'assets/images/Sunrise_Lovina.jpg',
-      'name': 'Pantai Lovina',
-      'location': 'Desa Beraban, Kec. Kediri',
-    },
-    {
-      'image': 'assets/images/Sunrise_Sanur.jpg',
-      'name': 'Pantai Sanur',
-      'location': 'Kec. Denpasar Timur',
-    },
-    {
-      'image': 'assets/images/Sunrise_Batur.jpg',
-      'name': 'Gunung Batur',
-      'location': 'Desa Beraban, Kec. Kediri',
-    },
-    {
-      'image': 'assets/images/Sunrise_Kintamani.jpg',
-      'name': 'Kintamani',
-      'location': 'Kec. Kintamani, Bangli',
-    },
-  ];
+  final String category;
+  const DetailExploreScreen({Key? key, required this.category}) : super(key: key);
+
+  List<Map<String, String>> getPlacesByCategory(String category) {
+    switch (category.toLowerCase()) {
+      case 'sunrise':
+        return [
+          {
+            'image': 'assets/images/Sunrise_Mertasari.jpg',
+            'name': 'Pantai Mertasari',
+            'location': 'Kec. Denpasar Timur',
+          },
+          {
+            'image': 'assets/images/Sunrise_Lovina.jpg',
+            'name': 'Pantai Lovina',
+            'location': 'Desa Beraban, Kec. Kediri',
+          },
+          {
+            'image': 'assets/images/Sunrise_Sanur.jpg',
+            'name': 'Pantai Sanur',
+            'location': 'Kec. Denpasar Timur',
+          },
+          {
+            'image': 'assets/images/Sunrise_Batur.jpg',
+            'name': 'Gunung Batur',
+            'location': 'Desa Beraban, Kec. Kediri',
+          },
+          {
+            'image': 'assets/images/Sunrise_Kintamani.jpg',
+            'name': 'Kintamani',
+            'location': 'Kec. Kintamani, Bangli',
+          },
+        ];
+      case 'dance':
+        return [
+          {
+            'image': 'assets/images/CendrawasihDance.jpg',
+            'name': 'Cendrawasih Dance',
+            'location': 'Ubud, Gianyar',
+          },
+          {
+            'image': 'assets/images/Tari_Barong.jpg',
+            'name': 'Barong Dance',
+            'location': 'GWK, Badung',
+          },
+          {
+            'image': 'assets/images/Tari_Kecak.jpg',
+            'name': 'Kecak Dance',
+            'location': 'Uluwatu, Bsadung',
+          },
+          
+        ];
+      case 'market':
+        return [
+          {
+            'image': 'assets/images/SundayMarketCanggu.jpg',
+            'name': 'Sunday Market',
+            'location': 'Canggu',
+          },
+        ];
+      case 'monkey':
+        return [
+          {
+            'image': 'assets/images/UbudMonkey.jpg',
+            'name': 'Monkey Forest',
+            'location': 'Ubud',
+          },
+        ];
+      case 'sunset':
+        return [
+          {
+            'image': 'assets/images/Sunset_TanahLot.jpg',
+            'name': 'Tanah Lot',
+            'location': 'Tabanan',
+          },
+        ];
+      default:
+        return [];
+    }
+  }
+
+  String getTitle(String category) {
+    switch (category.toLowerCase()) {
+      case 'sunrise':
+        return 'Sunrise';
+      case 'dance':
+        return 'Dance';
+      case 'market':
+        return 'Market';
+      case 'monkey':
+        return 'Monkey';
+      case 'sunset':
+        return 'Sunset';
+      case 'spirituals':
+        return 'Spirituals';
+      default:
+        return category;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final places = getPlacesByCategory(category);
+    final title = getTitle(category);
     return Scaffold(
       backgroundColor: Color(0xFFEFF2F7),
       appBar: PreferredSize(
@@ -44,7 +118,7 @@ class DetailExploreScreen extends StatelessWidget {
           ),
           centerTitle: true,
           title: Text(
-            'Sunrise',
+            title,
             style: TextStyle(
               color: Colors.blue[800],
               fontWeight: FontWeight.bold,
@@ -59,7 +133,7 @@ class DetailExploreScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Explore Your Sunrise Place',
+              'Explore the Magic of $title',
               style: TextStyle(
                 color: Colors.blue[800],
                 fontWeight: FontWeight.w600,
@@ -69,7 +143,7 @@ class DetailExploreScreen extends StatelessWidget {
             SizedBox(height: 16),
             Expanded(
               child: GridView.builder(
-                itemCount: sunrisePlaces.length,
+                itemCount: places.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
@@ -77,7 +151,7 @@ class DetailExploreScreen extends StatelessWidget {
                   childAspectRatio: 0.95,
                 ),
                 itemBuilder: (context, index) {
-                  final place = sunrisePlaces[index];
+                  final place = places[index];
                   return Container(
                     decoration: BoxDecoration(
                       color: Colors.white,

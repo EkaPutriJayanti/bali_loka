@@ -16,14 +16,14 @@ class ExploreScreen extends StatelessWidget {
         'title': 'Cendrawasih Dance',
         'image': 'assets/images/CendrawasihDance.jpg',
       },
-      {'title': 'Sunrise in Batur', 'image': 'assets/images/SunriseBatur.jpg'},
-      {'title': 'Ubud Monkey', 'image': 'assets/images/UbudMonkey.jpg'},
+      {'title': 'Sunrise', 'image': 'assets/images/SunriseBatur.jpg'},
+      {'title': 'Animals', 'image': 'assets/images/UbudMonkey.jpg'},
       {
         'title': 'Sunday Market Canggu',
         'image': 'assets/images/SundayMarketCanggu.jpg',
       },
-      {'title': 'Dolphins Lovina', 'image': 'assets/images/DolphinsLovina.jpg'},
-      {'title': 'Ogoh-ogoh', 'image': 'assets/images/OgohOgoh.jpg'},
+      {'title': 'Marine', 'image': 'assets/images/DolphinsLovina.jpg'},
+      {'title': 'Spirituals', 'image': 'assets/images/OgohOgoh.jpg'},
     ];
 
     final List<List<double>> cardSizes = [
@@ -107,7 +107,34 @@ class ExploreScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final item = items[index];
                     final size = cardSizes[index];
-                    final isSunrise = item['title'] == 'Sunrise in Batur';
+
+                    String? getCategoryForTitle(String title) {
+                      switch (title.toLowerCase()) {
+                        case 'sunrise in batur':
+                        case 'sunrise':
+                          return 'sunrise';
+                        case 'cendrawasih dance':
+                        case 'dance':
+                          return 'dance';
+                        case 'sunday market canggu':
+                        case 'sunday market':
+                          return 'market';
+                        case 'ubud monkey':
+                        case 'animals':
+                        case 'monkey':
+                          return 'animals';
+                        case 'dolphins lovina':
+                        case 'marine':
+                          return 'marine';
+                        case 'ogoh-ogoh':
+                        case 'spirituals':
+                          return 'spirituals';
+                        default:
+                          return null;
+                      }
+                    }
+
+                    final category = getCategoryForTitle(item['title']!);
 
                     final card = SizedBox(
                       height: 120 * size[1],
@@ -143,13 +170,13 @@ class ExploreScreen extends StatelessWidget {
                       ),
                     );
 
-                    if (isSunrise) {
+                    if (category != null) {
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DetailExploreScreen(),
+                              builder: (context) => DetailExploreScreen(category: category),
                             ),
                           );
                         },
