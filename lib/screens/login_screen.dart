@@ -16,6 +16,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
   String? _error;
+  bool _obscurePassword = true;
+
+  // Error states
+  String? _emailError;
+  String? _passwordError;
 
   @override
   void dispose() {
@@ -26,9 +31,43 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleSignIn() async {
     setState(() {
-      _isLoading = true;
+      _emailError = null;
+      _passwordError = null;
       _error = null;
     });
+
+    // Email validation
+    if (_emailController.text.trim().isEmpty) {
+      setState(() {
+        _emailError = 'Email cannot be empty';
+      });
+      return;
+    } else if (!RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+    ).hasMatch(_emailController.text.trim())) {
+      setState(() {
+        _emailError = 'Invalid email format';
+      });
+      return;
+    }
+
+    // Password validation
+    if (_passwordController.text.isEmpty) {
+      setState(() {
+        _passwordError = 'Password cannot be empty';
+      });
+      return;
+    } else if (_passwordController.text.length < 6) {
+      setState(() {
+        _passwordError = 'Password must be at least 6 characters';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       final user = await loginUser(
         _emailController.text.trim(),
@@ -76,6 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Email Field
                 TextField(
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintText: 'Email',
                     hintStyle: GoogleFonts.poppins(color: Colors.grey),
@@ -87,25 +127,29 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
+                      borderSide: BorderSide(
+                        color: _emailError != null ? Colors.red : Colors.grey,
                         width: 0.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF4A72B0),
+                      borderSide: BorderSide(
+                        color:
+                            _emailError != null
+                                ? Colors.red
+                                : const Color(0xFF4A72B0),
                         width: 1,
                       ),
                     ),
+                    errorText: _emailError,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 20),
                 // Password Field
                 TextField(
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     hintText: 'Password',
                     hintStyle: GoogleFonts.poppins(color: Colors.grey),
@@ -117,17 +161,37 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
+                      borderSide: BorderSide(
+                        color:
+                            _passwordError != null ? Colors.red : Colors.grey,
                         width: 0.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF4A72B0),
+                      borderSide: BorderSide(
+                        color:
+                            _passwordError != null
+                                ? Colors.red
+                                : const Color(0xFF4A72B0),
                         width: 1,
                       ),
+                    ),
+                    errorText: _passwordError,
+                    suffixIcon: IconButton(
+                      padding: const EdgeInsets.only(right: 12),
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.grey,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
                     ),
                   ),
                 ),

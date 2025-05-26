@@ -17,6 +17,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
   String? _error;
+  bool _obscurePassword = true;
+
+  // Error states
+  String? _nameError;
+  String? _phoneError;
+  String? _emailError;
+  String? _passwordError;
 
   @override
   void dispose() {
@@ -29,9 +36,68 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> _handleSignUp() async {
     setState(() {
-      _isLoading = true;
+      _nameError = null;
+      _phoneError = null;
+      _emailError = null;
+      _passwordError = null;
       _error = null;
     });
+
+    // Name validation
+    if (_nameController.text.trim().isEmpty) {
+      setState(() {
+        _nameError = 'Name cannot be empty';
+      });
+      return;
+    }
+
+    // Phone validation
+    if (_phoneController.text.trim().isEmpty) {
+      setState(() {
+        _phoneError = 'Phone number cannot be empty';
+      });
+      return;
+    } else if (!RegExp(
+      r'^[0-9]{10,13}$',
+    ).hasMatch(_phoneController.text.trim())) {
+      setState(() {
+        _phoneError = 'Invalid phone number format';
+      });
+      return;
+    }
+
+    // Email validation
+    if (_emailController.text.trim().isEmpty) {
+      setState(() {
+        _emailError = 'Email cannot be empty';
+      });
+      return;
+    } else if (!RegExp(
+      r'^[\w\.\-@]+@([\w\-]+\.)+[\w\-]{2,4}$',
+    ).hasMatch(_emailController.text.trim())) {
+      setState(() {
+        _emailError = 'Invalid email format';
+      });
+      return;
+    }
+
+    // Password validation
+    if (_passwordController.text.isEmpty) {
+      setState(() {
+        _passwordError = 'Password cannot be empty';
+      });
+      return;
+    } else if (_passwordController.text.length < 6) {
+      setState(() {
+        _passwordError = 'Password must be at least 6 characters';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       await registerUser(
         _nameController.text.trim(),
@@ -46,7 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
     } catch (e) {
       setState(() {
-        _error = e is Exception ? e.toString() : 'Sign up failed';
+        _error = e.toString();
       });
     } finally {
       setState(() {
@@ -91,18 +157,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
+                      borderSide: BorderSide(
+                        color: _nameError != null ? Colors.red : Colors.grey,
                         width: 0.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF4A72B0),
+                      borderSide: BorderSide(
+                        color:
+                            _nameError != null
+                                ? Colors.red
+                                : const Color(0xFF4A72B0),
                         width: 1,
                       ),
                     ),
+                    errorText: _nameError,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -121,18 +191,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
+                      borderSide: BorderSide(
+                        color: _phoneError != null ? Colors.red : Colors.grey,
                         width: 0.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF4A72B0),
+                      borderSide: BorderSide(
+                        color:
+                            _phoneError != null
+                                ? Colors.red
+                                : const Color(0xFF4A72B0),
                         width: 1,
                       ),
                     ),
+                    errorText: _phoneError,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -151,25 +225,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
+                      borderSide: BorderSide(
+                        color: _emailError != null ? Colors.red : Colors.grey,
                         width: 0.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF4A72B0),
+                      borderSide: BorderSide(
+                        color:
+                            _emailError != null
+                                ? Colors.red
+                                : const Color(0xFF4A72B0),
                         width: 1,
                       ),
                     ),
+                    errorText: _emailError,
                   ),
                 ),
                 const SizedBox(height: 16),
                 // Password Field
                 TextField(
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     hintText: 'Password',
                     hintStyle: GoogleFonts.poppins(color: Colors.grey),
@@ -181,17 +259,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
+                      borderSide: BorderSide(
+                        color:
+                            _passwordError != null ? Colors.red : Colors.grey,
                         width: 0.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF4A72B0),
+                      borderSide: BorderSide(
+                        color:
+                            _passwordError != null
+                                ? Colors.red
+                                : const Color(0xFF4A72B0),
                         width: 1,
                       ),
+                    ),
+                    errorText: _passwordError,
+                    suffixIcon: IconButton(
+                      padding: const EdgeInsets.only(right: 12),
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.grey,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
                     ),
                   ),
                 ),
@@ -228,26 +326,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Login Link
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     Text(
-                //       'Already have an account? ',
-                //       style: GoogleFonts.poppins(color: Colors.grey),
-                //     ),
-                //     GestureDetector(
-                //       onTap: () => Navigator.pop(context),
-                //       child: Text(
-                //         'Sign in',
-                //         style: GoogleFonts.poppins(
-                //           color: const Color(0xFF4A72B0),
-                //           fontWeight: FontWeight.w600,
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 const SizedBox(height: 20),
               ],
             ),
